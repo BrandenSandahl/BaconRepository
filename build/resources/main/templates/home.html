@@ -10,25 +10,15 @@
 {{>header}}
 <div id="mainContent">
 
-
-{{#user}}
-    {{^actor}}
-<P>Bacon Degree an Actor!
+    {{#user}}
+<P>Create a new bacon trail!
     <form action="createActor" method="post">
     <label for="actorName">Actor:</label><input type="text" placeholder="Enter Actor" name="actorName">
     <button type="submit"><img src="Bacon-128.png"></button>
 </form>
-    {{/actor}}
-    {{#actor}}
-    <p>Work on Bacon Degree for {{actor.name}}
-        {{#film}}
-            <form action="createFilm"></form>
-        {{/film}}
-    </p>
-    {{/actor}}
 
 </P>
-{{/user}}
+    {{/user}}
 
 
 
