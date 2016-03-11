@@ -1,11 +1,13 @@
 package com.sixtelmedia.Controllers;
 
 import com.sixtelmedia.Entities.Actor;
+import com.sixtelmedia.Entities.Film;
 import com.sixtelmedia.Entities.User;
 import com.sixtelmedia.Services.ActorRepository;
 import com.sixtelmedia.Services.FilmRepository;
 import com.sixtelmedia.Services.UserRepository;
 import com.sixtelmedia.Utils.PasswordStorage;
+import javafx.util.converter.LocalDateTimeStringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by branden on 3/10/16 at 18:36.
@@ -82,10 +90,29 @@ public class BaconExtenderController {
     public String createActor(HttpSession session, String actorName) {
         User user = userRepository.findByName(session.getAttribute("userName").toString());
 
-        Actor actor = new Actor(actorName, user);
+        Actor actor = new Actor(actorName);
         actorRepository.save(actor);
 
         session.setAttribute("actorName", actor.getName());
+
+        return "redirect:/";
+    }
+
+    @RequestMapping(path = "/createFilm", method = RequestMethod.POST)
+    public String createFilm(HttpSession session, String movieName, String releaseYear, String actorConnection) throws ParseException {
+        //Actor actor = actorRepository.findByName(session.getAttribute("actorName").toString());
+        Actor actor = new Actor(actorConnection);
+        actorRepository.save(actor);
+
+        Year year = Year.parse(releaseYear);
+
+        LocalDate year1 = LocalDate.from(year);
+
+
+
+        Film film = new Film(movieName, year1);
+        film.setActor(actor);
+        filmRepository.save(film);
 
         return "redirect:/";
     }

@@ -16,7 +16,7 @@ public class Film {
     @Column(nullable = false, unique = true)
     private String name;
     @Column(nullable = false)
-    private int jump;
+    private int degree;
     @Column(nullable = false)
     private LocalDate releaseYear;
 
@@ -26,9 +26,8 @@ public class Film {
     public Film() {
     }
 
-    public Film(String name, int jump, LocalDate releaseYear) {
+    public Film(String name, LocalDate releaseYear) {
         this.name = name;
-        this.jump = jump;
         this.releaseYear = releaseYear;
     }
 
@@ -41,12 +40,12 @@ public class Film {
         this.name = name;
     }
 
-    public int getJump() {
-        return jump;
+    public int getDegree() {
+        return degree;
     }
 
-    public void setJump(int jump) {
-        this.jump = jump;
+    public void setDegree(int degree) {
+        this.degree = degree;
     }
 
     public LocalDate getReleaseYear() {

@@ -16,16 +16,18 @@ public class Actor {
     private String name;
 
 
-    @ManyToOne
-    private User user;
+//    @ManyToOne
+//    private User user;
+
+
 
 
     public Actor() {
     }
 
-    public Actor(String name, User user) {
+    public Actor(String name) {
         this.name = name;
-        this.user = user;
+//        this.user = user;
     }
 
 
@@ -37,13 +39,13 @@ public class Actor {
         this.name = name;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
 
 
 }

@@ -10,15 +10,33 @@
 {{>header}}
 <div id="mainContent">
 
-    {{#user}}
-<P>Create a new bacon trail!
-    <form action="createActor" method="post">
-    <label for="actorName">Actor:</label><input type="text" placeholder="Enter Actor" name="actorName">
+
+{{#user}}
+    {{^actor}}
+<P>Bacon Degree an Actor!
+    <form action="/createActor" method="post">
+    <label for="actorName">Actor</label><input type="text" placeholder="Enter Actor" name="actorName" />
     <button type="submit"><img src="Bacon-128.png"></button>
 </form>
+    {{/actor}}
+    {{#actor}}
+    <p>Work on Bacon Degree for {{actor.name}}
+        <form action="/createFilm" method="post">
+           <label for="movieName">Movie</label><input type="text" placeholder="Enter Movie Name" name="movieName" />
+            <label for="releaseYear">Release Year</label> <input type="number" placeholder="Release Year" name="releaseYear" />
+            <label for="actorConnection">Actor Connection</label><input type="text" placeholder="Enter Connection" name="actorConnection" />
+            <button type="submit">BACONATE</button>
+        </form>
+        {{#film}}
+        <ol>
+            <li>{{name}} - {{releaseYear}} - {{degree}}</li>
+        </ol>
+        {{/film}}
+    </p>
+    {{/actor}}
 
 </P>
-    {{/user}}
+{{/user}}
 
 
 
