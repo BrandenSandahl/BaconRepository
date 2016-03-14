@@ -49,4 +49,32 @@ public class Actor {
     public void setFilms(List<Film> films) {
         this.films = films;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+    @Override
+    public boolean equals(Object object)
+    {
+        boolean isEqual= false;
+
+        if (object != null && object instanceof Actor)
+        {
+            isEqual = (this.name.equals(((Actor) object).name));
+        }
+
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id;
+    }
+
 }

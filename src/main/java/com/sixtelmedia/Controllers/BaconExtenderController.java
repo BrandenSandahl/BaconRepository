@@ -35,10 +35,10 @@ public class BaconExtenderController {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String home(HttpSession session, Model model, boolean passMisMatch, boolean nameBad) {
-        if (nameBad == true) {
+        if (nameBad) {
             return "home";
         }
-        if (passMisMatch == true) {
+        if (passMisMatch) {
             return "home";
         }
 
@@ -77,7 +77,7 @@ public class BaconExtenderController {
                 session.setAttribute("userName", user.getName()); //set session
                 return "redirect:/"; //done
             } else {
-                return "redirect:/?passMisMatch=true"; //otherwise paswords do not match
+                return "redirect:/?passMisMatch=true"; //otherwise passwords do not match
             }
         } else {
             return "redirect:/?nameBad=true"; //otherwise user entered bad input
@@ -115,12 +115,15 @@ public class BaconExtenderController {
 
 
         Film film = filmRepository.findOne(filmId);
-        ArrayList<Actor> actorListNew = parseActors(actors);
+        List<Actor> actorListNew = parseActors(actors);
         List<Actor> actorListOld = film.getActors();
 
 
         for (Actor a : actorListOld) {
             if (actorListNew.contains(a)) {
+                if (actorRepository.findOne(a.getId()) != null) {
+
+                }
                 actorListNew.remove(a);
             }
         }

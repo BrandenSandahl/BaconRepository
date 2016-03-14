@@ -11,7 +11,7 @@ public class Film {
 
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
     @Column(nullable = false, unique = true)
     private String name;
@@ -66,5 +66,15 @@ public class Film {
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+
 }
 
