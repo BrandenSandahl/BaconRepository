@@ -7,7 +7,6 @@ import com.sixtelmedia.Services.ActorRepository;
 import com.sixtelmedia.Services.FilmRepository;
 import com.sixtelmedia.Services.UserRepository;
 import com.sixtelmedia.Utils.PasswordStorage;
-import javafx.util.converter.LocalDateTimeStringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,12 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpSession;
-import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Year;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by branden on 3/10/16 at 18:36.
@@ -50,12 +47,15 @@ public class BaconExtenderController {
         User user = userRepository.findByName(userName);
         Actor actor = actorRepository.findByName(actorName);
 
+
         if (user != null) {
             model.addAttribute("user", user); //add in the user
+            model.addAttribute("film", filmRepository.findByCreatedById(user.getId()));
         }
         if (actor != null) {
             model.addAttribute("actor", actor);
         }
+
 
 
         return "home";
@@ -86,36 +86,70 @@ public class BaconExtenderController {
     }
 
 
-    @RequestMapping(path = "/createActor", method = RequestMethod.POST)
-    public String createActor(HttpSession session, String actorName) {
-        User user = userRepository.findByName(session.getAttribute("userName").toString());
-
-        Actor actor = new Actor(actorName);
-        actorRepository.save(actor);
-
-        session.setAttribute("actorName", actor.getName());
-
-        return "redirect:/";
-    }
 
     @RequestMapping(path = "/createFilm", method = RequestMethod.POST)
-    public String createFilm(HttpSession session, String movieName, String releaseYear, String actorConnection) throws ParseException {
-        //Actor actor = actorRepository.findByName(session.getAttribute("actorName").toString());
-        Actor actor = new Actor(actorConnection);
-        actorRepository.save(actor);
+    public String createFilm(HttpSession session, String movieName, String releaseYear, String actors) throws ParseException {
+        User user = userRepository.findByName(session.getAttribute("userName").toString());
 
-        Year year = Year.parse(releaseYear);
+        ArrayList<Actor> actorList = parseActors(actors);
 
-        LocalDate year1 = LocalDate.from(year);
-
-
-
-        Film film = new Film(movieName, year1);
-        film.setActor(actor);
+        Film film = new Film(movieName, releaseYear, user);
+        film.setActors(actorList);
         filmRepository.save(film);
 
         return "redirect:/";
     }
+
+    @RequestMapping(path = "/edit", method = RequestMethod.GET)
+    public String edit(Model model, int filmId) {
+
+        Film film = filmRepository.findOne(filmId);
+
+        model.addAttribute("film", film);
+
+        return "edit";
+    }
+
+    @RequestMapping(path = "/editFilm", method = RequestMethod.POST)
+    public String editFilm(String movieName, String releaseYear, String actors, int filmId) throws ParseException {
+
+
+        Film film = filmRepository.findOne(filmId);
+        ArrayList<Actor> actorListNew = parseActors(actors);
+        List<Actor> actorListOld = film.getActors();
+
+
+        for (Actor a : actorListOld) {
+            if (actorListNew.contains(a)) {
+                actorListNew.remove(a);
+            }
+        }
+
+
+        film.setName(movieName);
+        film.setReleaseYear(releaseYear);
+
+        film.setActors(actorListNew);
+
+
+        filmRepository.save(film);
+
+        return "redirect:/";
+    }
+
+    public static ArrayList<Actor> parseActors(String actors) {
+        ArrayList<Actor> actorList = new ArrayList<>();
+
+        for (String s : Arrays.asList(actors.split(","))) {
+            Actor a = new Actor(s);
+            actorList.add(a);
+        }
+        return actorList;
+    }
+
+
+
+
 
 
 

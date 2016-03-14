@@ -1,7 +1,7 @@
 package com.sixtelmedia.Entities;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Created by branden on 3/10/16 at 13:14.
@@ -16,19 +16,21 @@ public class Film {
     @Column(nullable = false, unique = true)
     private String name;
     @Column(nullable = false)
-    private int degree;
-    @Column(nullable = false)
-    private LocalDate releaseYear;
+    private String releaseYear;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Actor> actors;
 
     @ManyToOne
-    private Actor actor;
+    private User createdBy;
 
     public Film() {
     }
 
-    public Film(String name, LocalDate releaseYear) {
+    public Film(String name, String releaseYear, User createdBy) {
         this.name = name;
         this.releaseYear = releaseYear;
+        this.createdBy = createdBy;
     }
 
 
@@ -40,27 +42,29 @@ public class Film {
         this.name = name;
     }
 
-    public int getDegree() {
-        return degree;
-    }
 
-    public void setDegree(int degree) {
-        this.degree = degree;
-    }
-
-    public LocalDate getReleaseYear() {
+    public String getReleaseYear() {
         return releaseYear;
     }
 
-    public void setReleaseYear(LocalDate releaseYear) {
+    public void setReleaseYear(String releaseYear) {
         this.releaseYear = releaseYear;
     }
 
-    public Actor getActor() {
-        return actor;
+    public List<Actor> getActors() {
+        return actors;
     }
 
-    public void setActor(Actor actor) {
-        this.actor = actor;
+    public void setActors(List<Actor> actors) {
+        this.actors = actors;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 }
+

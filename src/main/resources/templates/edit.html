@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Film</title>
+</head>
+<body>
+
+{{#film}}
+<p> edit film
+<form action="/editFilm" method="post">
+    <label for="movieName">Movie</label><input type="text" placeholder="Enter Movie Name" name="movieName" value="{{name}}"/>
+    <label for="releaseYear">Release Year</label> <input type="number" placeholder="yyyy" name="releaseYear" value="{{releaseYear}}" />
+    <label for="actors"></label><input type="text" placeholder="Enter actors comma separated" name="actors" value="{{#actors}}{{name}}, {{/actors}}"/>
+    <input type="hidden" value="{{id}}" name="filmId" />
+    <button type="submit">edit</button>
+</form>
+</p>
+{{/film}}
+
+</body>
+</html>

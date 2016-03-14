@@ -3,39 +3,51 @@
 <head>
     <link href="style.css" type="text/css" rel="stylesheet" />
     <meta charset="UTF-8">
-    <title>Find the link to the Baconater</title>
+    <title>Track your films</title>
 </head>
 <body>
+
 
 {{>header}}
 <div id="mainContent">
 
 
 {{#user}}
-    {{^actor}}
+    <form action="/findFilm" method="post" />
+    <input type="text" name="findFilm" placeholder="Enter a film" /><input type="radio" name="searchBy" value="film">Film<input type="radio" name="searchBy" value="actors" />Actor
+    <button type="submit">Search</button>
+    </form>
+
+
+<p> Add film
+    <form action="/createFilm" method="post">
+        <label for="movieName">Movie</label><input type="text" placeholder="Enter Movie Name" name="movieName" />
+        <label for="releaseYear">Release Year</label> <input type="number" placeholder="yyyy" name="releaseYear" />
+        <label for="actors"></label><input type="text" placeholder="Enter actors comma separated" name="actors" />
+        <button type="submit">Add</button>
+    </form>
+</p>
+
+
+<!--
+    {{^actors}}
 <P>Bacon Degree an Actor!
     <form action="/createActor" method="post">
     <label for="actorName">Actor</label><input type="text" placeholder="Enter Actor" name="actorName" />
     <button type="submit"><img src="Bacon-128.png"></button>
 </form>
-    {{/actor}}
-    {{#actor}}
-    <p>Work on Bacon Degree for {{actor.name}}
-        <form action="/createFilm" method="post">
-           <label for="movieName">Movie</label><input type="text" placeholder="Enter Movie Name" name="movieName" />
-            <label for="releaseYear">Release Year</label> <input type="number" placeholder="Release Year" name="releaseYear" />
-            <label for="actorConnection">Actor Connection</label><input type="text" placeholder="Enter Connection" name="actorConnection" />
-            <button type="submit">BACONATE</button>
-        </form>
-        {{#film}}
-        <ol>
-            <li>{{name}} - {{releaseYear}} - {{degree}}</li>
-        </ol>
-        {{/film}}
-    </p>
-    {{/actor}}
+    {{/actors}}
 
-</P>
+    -->
+
+
+    <ol>
+    {{#film}}
+        <li>{{name}} - {{releaseYear}} - <ul>{{#actors}}<li>{{name}} </li>{{/actors}}</ul><a href="/edit?filmId={{id}}">edit</a>
+        </li>
+    {{/film}}
+        </ol>
+
 {{/user}}
 
 

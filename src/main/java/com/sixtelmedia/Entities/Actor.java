@@ -1,6 +1,7 @@
 package com.sixtelmedia.Entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by branden on 3/10/16 at 13:09.
@@ -15,6 +16,8 @@ public class Actor {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @ManyToMany(mappedBy = "actors")
+    private List<Film> films;
 
 //    @ManyToOne
 //    private User user;
@@ -27,7 +30,6 @@ public class Actor {
 
     public Actor(String name) {
         this.name = name;
-//        this.user = user;
     }
 
 
@@ -39,13 +41,12 @@ public class Actor {
         this.name = name;
     }
 
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
 
+    public List<Film> getFilms() {
+        return films;
+    }
 
+    public void setFilms(List<Film> films) {
+        this.films = films;
+    }
 }
