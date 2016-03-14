@@ -12,6 +12,7 @@ import java.util.List;
  * Created by branden on 3/10/16 at 13:30.
  */
 public interface FilmRepository extends CrudRepository<Film, Integer> {
+    Film findByName(String name);
 
     @Query("SELECT f FROM Film f WHERE f.name LIKE %?1%")
     List<Film> findByNameLike(String findFilm);

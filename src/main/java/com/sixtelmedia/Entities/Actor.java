@@ -16,8 +16,6 @@ public class Actor {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "actors")
-    private List<Film> films;
 
 //    @ManyToOne
 //    private User user;
@@ -42,13 +40,6 @@ public class Actor {
     }
 
 
-    public List<Film> getFilms() {
-        return films;
-    }
-
-    public void setFilms(List<Film> films) {
-        this.films = films;
-    }
 
     public int getId() {
         return id;

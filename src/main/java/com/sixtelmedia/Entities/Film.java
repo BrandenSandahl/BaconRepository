@@ -18,7 +18,7 @@ public class Film {
     @Column(nullable = false)
     private String releaseYear;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Transient
     private List<Actor> actors;
 
     @ManyToOne
@@ -51,13 +51,6 @@ public class Film {
         this.releaseYear = releaseYear;
     }
 
-    public List<Actor> getActors() {
-        return actors;
-    }
-
-    public void setActors(List<Actor> actors) {
-        this.actors = actors;
-    }
 
     public User getCreatedBy() {
         return createdBy;
@@ -75,6 +68,12 @@ public class Film {
         this.id = id;
     }
 
+    public List<Actor> getActors() {
+        return actors;
+    }
 
+    public void setActors(List<Actor> actors) {
+        this.actors = actors;
+    }
 }
 

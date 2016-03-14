@@ -2,8 +2,10 @@ package com.sixtelmedia.Controllers;
 
 import com.sixtelmedia.Entities.Actor;
 import com.sixtelmedia.Entities.Film;
+import com.sixtelmedia.Entities.FilmsActors;
 import com.sixtelmedia.Entities.User;
 import com.sixtelmedia.Services.ActorRepository;
+import com.sixtelmedia.Services.FilmActorsRepository;
 import com.sixtelmedia.Services.FilmRepository;
 import com.sixtelmedia.Services.UserRepository;
 import com.sixtelmedia.Utils.PasswordStorage;
@@ -31,6 +33,8 @@ public class BaconExtenderController {
     FilmRepository filmRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    FilmActorsRepository filmActorsRepository;
 
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
@@ -43,17 +47,23 @@ public class BaconExtenderController {
         }
 
         String userName = (String) session.getAttribute("userName");
-        String actorName = (String) session.getAttribute("actorName");
         User user = userRepository.findByName(userName);
-        Actor actor = actorRepository.findByName(actorName);
+
+
+        List<Film> films = null;
 
 
         if (user != null) {
+            if (filmRepository.count() > 0) {
+                films = filmRepository.findByCreatedById(user.getId());
+                for (Film f : films) {
+                    f.setActors(filmActorsRepository.findActorByFilm(f));
+                }
+            }
+
+
             model.addAttribute("user", user); //add in the user
-            model.addAttribute("film", filmRepository.findByCreatedById(user.getId()));
-        }
-        if (actor != null) {
-            model.addAttribute("actor", actor);
+            model.addAttribute("film", films);
         }
 
 
@@ -91,11 +101,29 @@ public class BaconExtenderController {
     public String createFilm(HttpSession session, String movieName, String releaseYear, String actors) throws ParseException {
         User user = userRepository.findByName(session.getAttribute("userName").toString());
 
-        ArrayList<Actor> actorList = parseActors(actors);
-
+        List<Actor> actorsInDb = (List<Actor>) actorRepository.findAll();
+        List<Actor> actorList = parseActors(actors);
         Film film = new Film(movieName, releaseYear, user);
-        film.setActors(actorList);
         filmRepository.save(film);
+        film = filmRepository.findByName(movieName);
+
+        //if name is already in DB take it out of the array
+        for (Actor a : actorsInDb) {
+            a.setName(a.getName().trim());
+            if (actorList.contains(a)) {
+                actorList.remove(a);
+            }
+        }
+
+        for (Actor a : actorList) {
+            actorRepository.save(a);
+            Actor actor = actorRepository.findByName(a.getName());
+            filmActorsRepository.save(new FilmsActors(film, actor));
+        }
+
+
+
+
 
         return "redirect:/";
     }
@@ -113,29 +141,18 @@ public class BaconExtenderController {
     @RequestMapping(path = "/editFilm", method = RequestMethod.POST)
     public String editFilm(String movieName, String releaseYear, String actors, int filmId) throws ParseException {
 
-
         Film film = filmRepository.findOne(filmId);
-        List<Actor> actorListNew = parseActors(actors);
-        List<Actor> actorListOld = film.getActors();
-
-
-        for (Actor a : actorListOld) {
-            if (actorListNew.contains(a)) {
-                if (actorRepository.findOne(a.getId()) != null) {
-
-                }
-                actorListNew.remove(a);
-            }
-        }
-
 
         film.setName(movieName);
         film.setReleaseYear(releaseYear);
 
-        film.setActors(actorListNew);
-
-
         filmRepository.save(film);
+
+        return "redirect:/";
+    }
+
+    @RequestMapping(path = "/deleteActor", method = RequestMethod.POST)
+    public String deleteActor(int actorId, int filmId) {
 
         return "redirect:/";
     }
@@ -149,12 +166,6 @@ public class BaconExtenderController {
         }
         return actorList;
     }
-
-
-
-
-
-
 
 
 
