@@ -15,6 +15,18 @@
     <button type="submit">edit</button>
 </form>
 </p>
+
+<p>
+    <form action="/addActorToFilm" method="post">
+    <fieldset>
+        <legend>Actors in {{name}}</legend>
+        <label for="actors">Actors</label><textarea name="actors" rows="5" cols="30" disabled>{{#actors}}{{actor.name}}&#13;&#10;{{/actors}}</textarea>
+        <label for="addActor">Add Actor</label><input name="addActor" type="text" placeholder="add an actor" />
+        <input type="hidden" value="{{id}}" name="filmId" />
+        <button type="submit">Add</button>
+    </fieldset>
+</form>
+</p>
 {{/film}}
 
 </body>

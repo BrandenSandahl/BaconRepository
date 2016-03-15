@@ -1,7 +1,7 @@
 package com.sixtelmedia.Entities;
 
 import javax.persistence.*;
-import java.util.List;
+
 
 /**
  * Created by branden on 3/10/16 at 13:09.
@@ -11,15 +11,10 @@ public class Actor {
 
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
     @Column(nullable = false, unique = true)
     private String name;
-
-
-//    @ManyToOne
-//    private User user;
-
 
 
 

@@ -12,5 +12,6 @@ import java.util.List;
  */
 public interface FilmActorsRepository extends CrudRepository<FilmsActors, Integer>{
     List<Actor> findActorByFilm(Film film);
+    FilmsActors findByActorId(Integer id);
 
 }

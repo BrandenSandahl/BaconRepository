@@ -44,11 +44,14 @@
     <ol>
     {{#film}}
         <li>{{name}} - {{releaseYear}}
-            <ul>{{#actors}}<li>{{actor.name}} <form action="/deleteActor" method="post"><input type="hidden" name="actorId" value="{{id}}"/> <button type="submit">Delete</button></form></li>{{/actors}}</ul>
+            <ul>{{#actors}}<li>{{actor.name}} <form action="/deleteActor" method="post"><input type="hidden" name="actorId" value="{{actor.id}}"/> <button type="submit">Delete</button></form></li>{{/actors}}</ul>
             <a href="/edit?filmId={{id}}">edit</a>
         </li>
     {{/film}}
         </ol>
+    {{#showPrevious}}<a href="/?page={{previousPage}}">Previous</a>{{/showPrevious}}
+    {{#showNext}}<a href="/?page={{nextPage}}">Next</a>{{/showNext}}
+    {{page}} of {{totalPages}}
 
 {{/user}}
 

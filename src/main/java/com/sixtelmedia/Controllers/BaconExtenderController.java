@@ -10,6 +10,8 @@ import com.sixtelmedia.Services.FilmRepository;
 import com.sixtelmedia.Services.UserRepository;
 import com.sixtelmedia.Utils.PasswordStorage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +40,7 @@ public class BaconExtenderController {
 
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
-    public String home(HttpSession session, Model model, boolean passMisMatch, boolean nameBad) {
+    public String home(HttpSession session, Integer page, Model model, boolean passMisMatch, boolean nameBad) {
         if (nameBad) {
             return "home";
         }
@@ -46,16 +48,19 @@ public class BaconExtenderController {
             return "home";
         }
 
+        page = (page == null) ? 0 : page;
+        PageRequest pr = new PageRequest(page, 1); //this is the subset we want to request
+
         String userName = (String) session.getAttribute("userName");
         User user = userRepository.findByName(userName);
 
 
-        List<Film> films = null;
+        Page<Film> films = null;
 
 
         if (user != null) {
             if (filmRepository.count() > 0) {
-                films = filmRepository.findByCreatedById(user.getId());
+                films = filmRepository.findByCreatedById(pr, user.getId());
                 for (Film f : films) {
                     f.setActors(filmActorsRepository.findActorByFilm(f));
                 }
@@ -64,6 +69,12 @@ public class BaconExtenderController {
 
             model.addAttribute("user", user); //add in the user
             model.addAttribute("film", films);
+            model.addAttribute("nextPage", page + 1 );
+            model.addAttribute("showNext", films.hasNext());
+            model.addAttribute("previousPage", page - 1);
+            model.addAttribute("showPrevious", films.hasPrevious());
+            model.addAttribute("totalPages", films.getTotalPages());
+            model.addAttribute("page", page + 1);
         }
 
 
@@ -129,9 +140,11 @@ public class BaconExtenderController {
     }
 
     @RequestMapping(path = "/edit", method = RequestMethod.GET)
-    public String edit(Model model, int filmId) {
+    public String edit(Model model, Integer filmId) {
 
         Film film = filmRepository.findOne(filmId);
+        film.setActors(filmActorsRepository.findActorByFilm(film));
+
 
         model.addAttribute("film", film);
 
@@ -139,7 +152,7 @@ public class BaconExtenderController {
     }
 
     @RequestMapping(path = "/editFilm", method = RequestMethod.POST)
-    public String editFilm(String movieName, String releaseYear, String actors, int filmId) throws ParseException {
+    public String editFilm(String movieName, String releaseYear, Integer filmId) throws ParseException {
 
         Film film = filmRepository.findOne(filmId);
 
@@ -152,9 +165,25 @@ public class BaconExtenderController {
     }
 
     @RequestMapping(path = "/deleteActor", method = RequestMethod.POST)
-    public String deleteActor(int actorId, int filmId) {
+    public String deleteActor(Integer actorId) {
+        filmActorsRepository.delete(filmActorsRepository.findByActorId(actorId));
 
         return "redirect:/";
+    }
+
+    @RequestMapping(path = "/addActorToFilm", method = RequestMethod.POST)
+    public String addActorToFilm(String addActor, Integer filmId) {
+
+        Actor actor = actorRepository.findByName(addActor);
+
+        if (actor != null) {
+            filmActorsRepository.save(new FilmsActors(filmRepository.findOne(filmId), actor));
+        } else {
+            actor = actorRepository.save(new Actor(addActor));
+            filmActorsRepository.save(new FilmsActors(filmRepository.findOne(filmId), actor));
+        }
+
+        return "redirect:/edit.html";
     }
 
     public static ArrayList<Actor> parseActors(String actors) {
